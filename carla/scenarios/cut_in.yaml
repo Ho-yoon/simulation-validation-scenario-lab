@@ -1,0 +1,43 @@
+name: cut_in
+version: "1.0"
+description: "NPC vehicle cuts in from adjacent lane at highway speed"
+
+environment:
+  map: Town04
+  weather: ClearNoon
+  time_of_day: noon
+
+ego:
+  vehicle: vehicle.tesla.model3
+  spawn: {x: -400.0, y: 3.5, z: 0.5, yaw: 0.0}
+  target_speed_kmh: 80.0
+
+actors:
+  - id: npc_cutter
+    vehicle: vehicle.audi.tt
+    spawn: {x: -370.0, y: 7.0, z: 0.5, yaw: 0.0}
+    behavior:
+      type: lane_change
+      target_lane_offset: -3.5  # cut into ego lane
+      trigger_distance: 20.0    # trigger when ego is 20m behind
+      cut_speed_kmh: 75.0
+
+success_criteria:
+  no_collision: true
+  ego_reaches_goal: true
+  max_distance: 500.0
+
+failure_criteria:
+  - type: collision
+    with: npc_cutter
+  - type: off_road
+
+max_duration_s: 60
+record_bag: true
+bag_topics:
+  - /sensing/lidar
+  - /sensing/camera/front
+  - /localization/odom
+  - /perception/tracked_objects
+  - /planning/path
+  - /control/cmd_vel

@@ -1,0 +1,39 @@
+name: pedestrian_crossing
+version: "1.0"
+description: "Pedestrian crosses road unexpectedly in urban environment"
+
+environment:
+  map: Town03
+  weather: CloudySunset
+  time_of_day: evening
+
+ego:
+  vehicle: vehicle.tesla.model3
+  spawn: {x: 100.0, y: 0.0, z: 0.5, yaw: 90.0}
+  target_speed_kmh: 30.0
+
+actors:
+  - id: pedestrian_1
+    type: pedestrian
+    blueprint: walker.pedestrian.0001
+    spawn: {x: 112.0, y: -4.0, z: 0.5, yaw: 0.0}
+    behavior:
+      type: walk_to
+      destination: {x: 112.0, y: 4.0}
+      speed: 1.2
+      trigger_distance: 15.0
+
+success_criteria:
+  no_collision: true
+  pedestrian_safe: true
+  ego_stops_before_collision: true
+
+failure_criteria:
+  - type: collision
+    with: pedestrian_1
+  - type: too_slow
+    threshold_kmh: 5.0
+    duration_s: 10.0
+
+max_duration_s: 30
+record_bag: true
